@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.20.1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+</head>
+<body>
+  <div id="vis"/>
+  <script>
+    const spec = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 600,
+  "height": 450,
+  "title": "Micropodinae Biodiversity of Victoria",
+  "projection": {"type": "mercator"},
+  "params": [
+    {
+      "name": "species_selection",
+      "bind": {
+        "input": "select",
+        "options": [
+          null,
+          "Black-Faced Kangaroo",
+          "Bridled Nailtail Wallaby",
+          "Brush-tailed Rock-wallaby",
+          "Eastern Grey Kangaroo",
+          "Eastern Hare-wallaby",
+          "Eastern Wallaroo",
+          "Euro/red Kangaroo",
+          "Red Kangaroo",
+          "Red-necked Wallaby",
+          "Swamp Wallaby",
+          "Tammar Wallaby",
+          "Tasmanian Pademelon",
+          "Western Grey Kangaroo",
+          "Whiptail Wallaby"
+        ],
+        "labels": [
+          "Show All",
+          "Black-Faced Kangaroo",
+          "Bridled Nailtail Wallaby",
+          "Brush-Tailed Rock-Wallaby",
+          "Eastern Grey Kangaroo",
+          "Eastern Hare-Wallaby",
+          "Eastern Wallaroo",
+          "Euro / Red Kangaroo",
+          "Red Kangaroo",
+          "Red-Necked Wallaby",
+          "Swamp Wallaby",
+          "Tammar Wallaby",
+          "Tasmanian Pademelon",
+          "Western Grey Kangaroo",
+          "Whiptail Wallaby"
+        ],
+        "name": "Species Selection: "
+      }
+    }
+  ],
+  "layer": [
+    {
+      "data": {
+        "url": "https://lpot0006.github.io/3179/map/victoria-australia_1308.json",
+        "format": {"type": "topojson", "feature": "victoria-australia_1308"}
+      },
+      "mark": {"type": "geoshape", "fill": "lightgrey", "stroke": "black"}
+    },
+    {
+      "data": {
+        "url": "https://lpot0006.github.io/3179/data/records-2024-10-10.csv"
+      },
+      "transform": [
+        {
+          "filter": "species_selection == null || datum.vernacularName == species_selection"
+        }
+      ],
+      "mark": {"type": "circle"},
+      "encoding": {
+        "longitude": {"field": "decimalLongitude", "type": "quantitative"},
+        "latitude": {"field": "decimalLatitude", "type": "quantitative"},
+        "size": {
+          "field": "individualCount",
+          "type": "quantitative",
+          "title": "Sightings",
+          "scale": {
+            "type": "threshold",
+            "domain": [50, 100, 250, 500, 1000, 1500]
+          }
+        },
+        "color": {
+          "field": "vernacularName",
+          "type": "nominal",
+          "title": "Species",
+          "scale": {"scheme": "goldgreen"}
+        },
+        "opacity": {"value": 1},
+        "tooltip": [
+          {"field": "vernacularName", "type": "nominal", "title": "Species"},
+          {
+            "field": "individualCount",
+            "type": "quantitative",
+            "format": ",",
+            "title": "Count"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {}
+};
+    vegaEmbed("#vis", spec, {mode: "vega-lite"}).then(console.log).catch(console.warn);
+  </script>
+</body>
+</html>
